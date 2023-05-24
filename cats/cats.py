@@ -220,13 +220,21 @@ def minimum_mewtations(typed, source, limit):
     >>> minimum_mewtations("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
     3
     """
-    if ________:   #Base cases 
+    if abs(len(typed) - len(source)) > limit:   #Base cases 
       return limit + 1
-    if ________:  #Recursive cases 
+    if not source:
+      return len(typed)
+    if not typed:
+      return len(source)
+
+    if typed[0] == source[0]:  #Recursive cases 
+      return minimum_mewtations(typed[1:], source[1:], limit)
     else:
-        add =  
-        remove = 
-        substitute = 
+        add = minimum_mewtations(typed, source[1:], limit-1)
+        remove = minimum_mewtations(typed[1:], source, limit-1)
+        substitute = minimum_mewtations(typed[1:], source[1:], limit-1)
+        return 1 + min(add, remove, substitute)
+    #ChatGPT finished this. Not me
 
 
 def final_diff(typed, source, limit):
@@ -267,7 +275,16 @@ def report_progress(typed, prompt, user_id, upload):
     0.2
     """
     # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
+    num_words = len(prompt)
+    num_correct = 0
+    for i in range(min(len(typed), len(prompt))):
+      if typed[i] == prompt[i]:
+        num_correct += 1
+      else:
+        break
+    progress = num_correct / num_words
+    upload({'id': user_id, 'progress': progress})
+    return progress
     # END PROBLEM 8
 
 
@@ -289,7 +306,15 @@ def time_per_word(words, times_per_player):
     [[6, 3, 6, 2], [10, 6, 1, 2]]
     """
     # BEGIN PROBLEM 9
-    "*** YOUR CODE HERE ***"
+    num_players = len(times_per_player)
+    num_words = len(words)
+    all_times = [[] for _ in range(num_players)]
+
+    for i in range(num_players):
+      for j in range(num_words):
+        all_times[i].append(times_per_player[i][j+1] - times_per_player[i][j])
+
+    return match(words, all_times)
     # END PROBLEM 9
 
 
@@ -311,7 +336,23 @@ def fastest_words(match):
     player_indices = range(len(get_all_times(match)))  # contains an *index* for each player
     word_indices = range(len(get_all_words(match)))    # contains an *index* for each word
     # BEGIN PROBLEM 10
-    "*** YOUR CODE HERE ***"
+    words = get_all_words(match)
+    times = get_all_times(match)
+    num_players = len(times)
+    num_words = len(times)
+    result = [[] for _ in player_indices]
+
+    for word_index in word_indices:
+      fastest_time = float('inf')
+
+      for player_index in player_indices:
+        entry_time = times[player_index][word_index]
+        if entry_time < fastest_time:
+          fastest_time = entry_time
+          player_with_fastest_time = player_index
+
+      result[player_with_fastest_time].append(words[word_index])
+    return result
     # END PROBLEM 10
 
 
